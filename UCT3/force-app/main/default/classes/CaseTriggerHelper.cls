@@ -11,10 +11,10 @@ public class CaseTriggerHelper {
     */
     public static void validateReservationRequest(List<Case> resRequests){
         Set<Id> accountsIds = getAccountsIdsSet(resRequests);
+        List<Account> accounts =  AccountService.getAccountsBySetIds(accountsIds);
         for(Case resRequest : resRequests){
             // Testing if the content of case is null or not to avoid NPE ;) 
             if(resRequest != null && resRequest.AccountId != null){
-                List<Account> accounts =  AccountService.getAccountsBySetIds(accountsIds);
                 for(Account ac : accounts){
                     Integer accountContacts = ac.Contacts.size();
                     resRequest = addRequestErrors(resRequest, accountContacts);
