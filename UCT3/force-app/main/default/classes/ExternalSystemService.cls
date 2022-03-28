@@ -5,20 +5,24 @@ public with sharing class ExternalSystemService implements Database.AllowsCallou
     */
     @future(callout=true)
     public static void registerAttendees(Set<Id> accounts){
+        // TODO: 25/3/2022 Fix typo
         List<Contact> contacts = ContactService.getContactsByAccounstId(accounts);
         HttpResponse response = ContactCalloutService.initiateCallout(contacts);
         Map<String, Object> results = new Map<String, Object>();
 
         if (response.getStatusCode() != 201) {
+            // TODO: 25/3/2022 REMOVE System.debug from your production code
             System.debug('The status code returned was not expected: ' +
                 response.getStatusCode() + ' ' + response.getStatus());
             Log.error('The status code returned was not expected: ' +
                 response.getStatusCode() + ' ' + response.getStatus());
         } else {
             // Parse the JSON response // Why ?
+            // TODO: 25/3/2022 Expected type Boolean; found String
             if(response.getBody()){
                 results = parseJsonResponse(response);
             }
+            // TODO: 25/3/2022 Call out may fail but in most cases does it make sense to send email when a record is not added in the external system
             if(!contacts.isEmpty()){
                 notifyAttendeeByEmail(contacts);
             }
@@ -31,6 +35,7 @@ public with sharing class ExternalSystemService implements Database.AllowsCallou
     public static Map<String, Object> parseJsonResponse(String json){
         Map<String, Object> results = (Map<String, Object>) JSON.deserializeUntyped(json);
         List<Object> animals = (List<Object>) results.get('animals');
+        // TODO: 25/3/2022 nice addition but no need
         for (Object animal : animals) {
             System.debug(animal);
         }
@@ -43,6 +48,8 @@ public with sharing class ExternalSystemService implements Database.AllowsCallou
     public static void notifyAttendeeByEmail(List<Contact> contacts){
         // what comes first task or email ?
         insertTask(contacts);
+
+        // TODO: 25/3/2022 Could be bulkified
         for(Contact contact : contacts){
             sendEmail(contact);
         }
@@ -84,6 +91,7 @@ public with sharing class ExternalSystemService implements Database.AllowsCallou
             task.Status = 'Open';
             task.Priority = 'Normal';
             // this field is a problem, please advise on why it is a problem
+            // TODO: 25/3/2022 answer :  whatId is a polymorphic ID field which accepts a couple of references in this case (Contact, Account ...)
             //task.WhatId = contact.Id; 
             tasksQueue.add(task);
         }

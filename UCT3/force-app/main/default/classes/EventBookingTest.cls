@@ -18,6 +18,7 @@ public class EventBookingTest {
     }
     
     @isTest
+    // TODO: 25/3/2022 Test classes could be private
     public static void refuseCaseCreationWhenNoContactIsAttachedToAnAccount(){
         // Given
         Account a1 = new Account(Name = 'Salesforce');
@@ -30,7 +31,8 @@ public class EventBookingTest {
         Test.stopTest();
 
         // Then
-        System.assert(!result.isSuccess());
+        // TODO: 25/3/2022 Assertions should have a message explaining the failure
+        System.assert(!result.isSuccess(), 'RESULT ');
         System.assert(result.getErrors().size() > 0);
         System.assertEquals('You cannot create a request for accounts without contacts',
         result.getErrors()[0].getMessage());
